@@ -2,7 +2,7 @@ from app import app
 def test_app():
     r = app.test_client().get("/api/posts/")
     assert r.status_code == 200
-    assert type(r.data) == list
+    assert type(r.json) == list
 
 
 def test_app_id():

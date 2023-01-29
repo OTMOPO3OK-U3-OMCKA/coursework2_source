@@ -1,12 +1,12 @@
 from flask import Flask, request, render_template, send_from_directory, Blueprint, jsonify
 from utils import get_post_by_pk, get_posts_all, get_comments_by_post_id, \
     get_comments, get_posts_by_user, search_for_posts, www
+from blueprinter.app_blue import api_blu
 
-
-from logger import my_logg
 
 app = Flask(__name__)
-app.config["JSON_AS_ASCII"] = False
+app.json.ensure_ascii = False
+app.register_blueprint(api_blu, url_prefix="/api/posts/")
 
 
 @app.route("/")
@@ -64,24 +64,13 @@ def user_feed(username):
         return "возможна ошибка шаблона", 500
 
 
-@app.route("/api/posts/")
-def api_posts():
-    my_logg.info("Запрос /api/posts/")
-    return jsonify(get_posts_all())
-
-
-@app.route("/api/posts/<post_id>")
-def api_post(post_id):
-    my_logg.info(f"Запрос /api/posts/{post_id}")
-    return jsonify(get_post_by_pk(int(post_id)))
-
-
-@app.route("/tag/")
-def get_tag():
+@app.route("/tag/<tagname>")
+def get_tag(tagname):
     return render_template("tag.html")
 
 @app.route("/bookmarks/")
 def bookmarks():
     return render_template("bookmarks.html")
 
-app.run()
+if __name__ == "__main__":
+    app.run()
